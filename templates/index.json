@@ -1,5 +1,52 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
+    "lookbook_DUhPDY": {
+      "type": "lookbook",
+      "blocks": {
+        "description_4edQwF": {
+          "type": "description",
+          "settings": {
+            "text": "Our latest collection demonstrates an elegant eccentricity – bold patterns inspired by traditional nomadic dressing, embroidered buttons, ceramic detailing and artisanal stitching contrast with stark, clean-lined silhouettes that showcase refined modernity.",
+            "italic": true
+          }
+        }
+      },
+      "block_order": [
+        "description_4edQwF"
+      ],
+      "name": "Lookbook",
+      "settings": {
+        "image": "shopify://shop_images/Main.jpg",
+        "image_width": 45,
+        "link_text": "Shop the look",
+        "link_url": "",
+        "modal_heading": "Shop the look",
+        "modal_body": "<p>Browse the pieces from this look and complete your outfit.</p>",
+        "modal_button_label": "View collection",
+        "modal_products": [
+          "the-3p-fulfilled-snowboard",
+          "the-collection-snowboard-hydrogen",
+          "the-collection-snowboard-liquid",
+          "the-collection-snowboard-oxygen",
+          "the-compare-at-price-snowboard",
+          "the-complete-snowboard",
+          "the-multi-managed-snowboard",
+          "selling-plans-ski-wax"
+        ],
+        "modal_products_heading": "Shop this look",
+        "background_color": "#f5f0eb",
+        "text_color": "#1a1a1a"
+      }
+    },
     "image_banner": {
       "type": "image-banner",
       "blocks": {
@@ -29,13 +76,13 @@
       "settings": {
         "image_overlay_opacity": 40,
         "image_height": "large",
-        "desktop_content_position": "bottom-center",
-        "show_text_box": false,
         "image_behavior": "none",
+        "desktop_content_position": "bottom-center",
         "desktop_content_alignment": "center",
+        "show_text_box": false,
         "color_scheme": "scheme-3",
-        "mobile_content_alignment": "center",
         "stack_images_on_mobile": false,
+        "mobile_content_alignment": "center",
         "show_text_below": false
       }
     },
@@ -60,6 +107,8 @@
         "modal_heading": "Shop the look",
         "modal_body": "<p>Browse the pieces from this look and complete your outfit.</p>",
         "modal_button_label": "View collection",
+        "modal_products": [],
+        "modal_products_heading": "Shop this look",
         "background_color": "#f5f0eb",
         "text_color": "#1a1a1a"
       }
@@ -67,20 +116,19 @@
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
+        "collection": "all",
+        "products_to_show": 8,
         "title": "Featured products",
         "heading_size": "h2",
         "description": "",
         "show_description": false,
         "description_style": "body",
-        "collection": "all",
-        "products_to_show": 8,
         "columns_desktop": 4,
-        "color_scheme": "scheme-1",
+        "enable_desktop_slider": false,
         "full_width": false,
         "show_view_all": true,
         "view_all_style": "solid",
-        "enable_desktop_slider": false,
-        "swipe_on_mobile": false,
+        "color_scheme": "scheme-1",
         "image_ratio": "adapt",
         "image_shape": "default",
         "show_secondary_image": true,
@@ -88,12 +136,14 @@
         "show_rating": false,
         "quick_add": "none",
         "columns_mobile": "2",
+        "swipe_on_mobile": false,
         "padding_top": 44,
         "padding_bottom": 36
       }
     }
   },
   "order": [
+    "lookbook_DUhPDY",
     "image_banner",
     "lookbook",
     "featured_collection"
