@@ -1,0 +1,155 @@
+{%- liquid
+  assign row_variant = product.selected_or_first_available_variant
+  assign row_price = row_variant.price
+  assign row_compare = row_variant.compare_at_price
+  assign on_sale = false
+  if row_compare > row_price
+    assign on_sale = true
+  endif
+  assign cart_form_id = 'lookbook-cart-' | append: section.id | append: '-' | append: index
+-%}
+
+<article
+  class="{% unless is_last %}border-b border-neutral-200 pb-5 mb-5{% endunless %}"
+  role="listitem"
+>
+  <div class="lookbook-product-row flex gap-5 md:gap-4">
+    <a
+      href="{{ product.url }}"
+      class="lookbook-product-media block h-28 w-28 shrink-0 overflow-hidden bg-[#ebe8e4] sm:h-24 sm:w-24"
+      data-modal-close-id="{{ lookbook_modal_id }}"
+      aria-label="{{ product.title | escape }}"
+    >
+      {%- if product.featured_media -%}
+        {{
+          product.featured_media
+          | image_url: width: 240
+          | image_tag:
+            loading: 'lazy',
+            class: 'w-full h-full object-cover',
+            widths: '120, 180, 240'
+        }}
+      {%- else -%}
+        <span class="flex w-full h-full items-center justify-center text-neutral-400 scale-75">
+          {{- 'product-1' | placeholder_svg_tag: 'w-full h-full' -}}
+        </span>
+      {%- endif -%}
+    </a>
+
+    <div class="flex-1 min-w-0 flex flex-col">
+      <div class="flex flex-row justify-between gap-3 items-start">
+        <div class="min-w-0">
+          {%- if product.vendor != blank -%}
+            <p class="m-0 text-base font-bold uppercase tracking-wide text-neutral-900 leading-tight">
+              {{ product.vendor | escape }}
+            </p>
+            <p class="m-0 mt-1 text-lg text-neutral-600 leading-snug line-clamp-2">
+              {{ product.title | escape }}
+            </p>
+          {%- else -%}
+            <p class="m-0 text-lg font-bold uppercase tracking-wide text-neutral-900 leading-tight line-clamp-2">
+              {{ product.title | escape }}
+            </p>
+            {%- if product.description != blank -%}
+              <p class="m-0 mt-1 text-base text-neutral-600 leading-snug line-clamp-2">
+                {{ product.description | strip_html | truncatewords: 14 }}
+              </p>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+        <div class="shrink-0 text-right text-base leading-tight" data-lookbook-price>
+          {%- if on_sale -%}
+            <div class="font-semibold text-red-600" data-lookbook-price-current data-on-sale="true">
+              {%- if settings.currency_code_enabled -%}
+                {{ row_price | money_with_currency }}
+              {%- else -%}
+                {{ row_price | money }}
+              {%- endif -%}
+            </div>
+            <div class="text-neutral-900 line-through mt-0.5" data-lookbook-price-compare>
+              {%- if settings.currency_code_enabled -%}
+                {{ row_compare | money_with_currency }}
+              {%- else -%}
+                {{ row_compare | money }}
+              {%- endif -%}
+            </div>
+          {%- else -%}
+            <div class="font-semibold text-neutral-900" data-lookbook-price-current data-on-sale="false">
+              {%- if settings.currency_code_enabled -%}
+                {{ row_price | money_with_currency }}
+              {%- else -%}
+                {{ row_price | money }}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <form
+        id="{{ cart_form_id }}"
+        class="lookbook-product-form mt-4 flex flex-col flex-wrap items-stretch justify-between gap-3 md:flex-row"
+        data-lookbook-cart-form
+        method="post"
+        action="{{ routes.cart_add_url }}"
+        accept-charset="UTF-8"
+      >
+        <input type="hidden" name="form_type" value="product">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="quantity" value="1">
+
+        <div class="lookbook-product-picker min-w-24 flex-1">
+          <label class="visually-hidden" for="Variant-{{ cart_form_id }}">
+            {{- 'products.product.variant' | t -}}
+          </label>
+          {%- if product.has_only_default_variant -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <div class="flex h-10 min-h-10 items-center border border-neutral-300 bg-white px-3 text-base text-neutral-900">
+              One size
+            </div>
+          {%- else -%}
+            <select
+              name="id"
+              id="Variant-{{ cart_form_id }}"
+              class="h-10 min-h-10 w-full border border-neutral-300 bg-white px-3 text-base text-neutral-900 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(var(--color-foreground),0.55)]"
+            >
+              {%- for variant in product.variants -%}
+                <option
+                  value="{{ variant.id }}"
+                  data-available="{{ variant.available }}"
+                  data-price="{% if settings.currency_code_enabled %}{{ variant.price | money_with_currency | escape }}{% else %}{{ variant.price | money | escape }}{% endif %}"
+                  data-compare="{% if variant.compare_at_price > variant.price %}{% if settings.currency_code_enabled %}{{ variant.compare_at_price | money_with_currency | escape }}{% else %}{{ variant.compare_at_price | money | escape }}{% endif %}{% endif %}"
+                  {% if variant == product.selected_or_first_available_variant %}
+                    selected="selected"
+                  {% endif %}
+                  {% unless variant.available %}
+                    disabled="disabled"
+                  {% endunless %}
+                >
+                  {{ variant.title | escape }}
+                </option>
+              {%- endfor -%}
+            </select>
+          {%- endif -%}
+        </div>
+
+        <button
+          type="submit"
+          name="add"
+          class="h-10 min-h-10 shrink-0 px-5 text-lg font-medium uppercase tracking-wide border border-neutral-900 bg-white text-neutral-900 hover:bg-neutral-900 hover:text-white transition-colors disabled:opacity-40 disabled:pointer-events-none md:w-64"
+          data-lookbook-submit
+          data-label-add="{{ 'products.product.add_to_cart' | t | escape }}"
+          data-label-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+          {% unless product.available %}
+            disabled
+          {% endunless %}
+        >
+          {% if product.available %}
+            {{ 'products.product.add_to_cart' | t }}
+          {% else %}
+            {{ 'products.product.sold_out' | t }}
+          {% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,39 @@
+<div class="lookbook-content flex-1 flex items-center justify-center px-8 py-12 md:px-16 md:py-12 lg:px-24">
+  <div class="max-w-md text-center" style="color: var(--lookbook-text);">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'heading' -%}
+          <h2
+            class="text-lg md:text-xl lg:text-2xl font-light tracking-wide mb-6 {{ block.settings.heading_size }}"
+            {{ block.shopify_attributes }}
+          >
+            {{ block.settings.heading }}
+          </h2>
+
+        {%- when 'description' -%}
+          <p
+            class="text-lg md:text-xl leading-relaxed font-light tracking-wide {% if block.settings.italic %}italic{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {{ block.settings.text }}
+          </p>
+
+        {%- when 'button' -%}
+          {%- if block.settings.button_label != blank -%}
+            <a
+              href="{{ block.settings.button_url | default: '#' }}"
+              class="inline-block mt-8 text-lg tracking-wider {% if block.settings.style == 'underline' %}underline underline-offset-4 decoration-[0.5px] hover:opacity-70{% else %}border px-8 py-3 hover:bg-[var(--lookbook-text)] hover:text-[var(--lookbook-bg)]{% endif %} transition-all"
+              style="color: var(--lookbook-text); {% if block.settings.style == 'outline' %}border-color: var(--lookbook-text);{% endif %}"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.button_label }}
+            </a>
+          {%- endif -%}
+
+        {%- when 'spacer' -%}
+          <div style="height: {{ block.settings.height }}px;" {{ block.shopify_attributes }}></div>
+
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</div>

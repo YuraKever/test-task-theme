@@ -1,0 +1,325 @@
+{%- style -%}
+  .lookbook-section-{{ section.id }} {
+    --lookbook-bg: {{ section.settings.background_color }};
+    --lookbook-text: {{ section.settings.text_color }};
+    --lookbook-image-width: {{ section.settings.image_width }}%;
+  }
+{%- endstyle -%}
+
+{%- assign lookbook_modal_id = 'lookbook-modal-' | append: section.id -%}
+{%- assign lookbook_has_products = false -%}
+{%- for _p in section.settings.modal_products -%}
+  {%- assign lookbook_has_products = true -%}
+  {%- break -%}
+{%- endfor -%}
+
+<div class="lookbook-section-{{ section.id }}">
+  <div class="lookbook-root flex min-h-0 flex-col md:min-h-[85vh] md:flex-row" style="background-color: var(--lookbook-bg);">
+
+    {%- comment -%} Image side {%- endcomment -%}
+    <div class="relative w-full md:w-[var(--lookbook-image-width)] py-12">
+      <div class="lookbook-media h-[72vw] md:h-full overflow-hidden">
+        <div class="relative size-full">
+          {%- if section.settings.image != blank -%}
+            {{
+              section.settings.image
+              | image_url: width: 1500
+              | image_tag:
+                class: 'w-full h-full object-cover',
+                sizes: '(min-width: 768px) 50vw, 100vw',
+                widths: '375, 550, 750, 1000, 1250, 1500'
+            }}
+          {%- else -%}
+            <div class="w-full h-full bg-neutral-300 flex items-center justify-center">
+              {{ 'detailed-apparel-1' | placeholder_svg_tag: 'w-2/3 h-2/3 text-neutral-400' }}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- if section.settings.link_text != blank -%}
+        <div class="lookbook-trigger-wrap mt-6 flex justify-center md:mt-4">
+          <button
+            type="button"
+            data-modal-open="{{ lookbook_modal_id }}"
+            class="inline-block mx-auto text-lg tracking-wider underline underline-offset-4 decoration-[0.5px] transition-opacity hover:opacity-70 bg-transparent border-0 p-0 cursor-pointer font-inherit"
+            style="color: var(--lookbook-text);"
+          >
+            {{ section.settings.link_text }}
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+    {%- comment -%} Text side {%- endcomment -%}
+    {% render 'lookbook-content', section: section %}
+  </div>
+
+  {%- if lookbook_has_products -%}
+    <ui-modal
+      id="{{ lookbook_modal_id }}"
+      data-layout="split"
+      label="{{ section.settings.modal_heading | default: section.settings.link_text | default: 'Dialog' | escape }}"
+    >
+      <div class="flex flex-col md:flex-row min-h-[min(78vh,620px)] max-h-[min(92vh,820px)] md:max-h-[min(92vh,860px)]">
+        {%- comment -%} Left: lifestyle image {%- endcomment -%}
+        <div class="w-full md:w-[47%] shrink-0 min-h-[260px] md:min-h-0 bg-[#ebe8e4]">
+          {%- if section.settings.image != blank -%}
+            {{
+              section.settings.image
+              | image_url: width: 1400
+              | image_tag:
+                class: 'w-full h-full min-h-[260px] md:min-h-full max-h-[48vh] md:max-h-none object-cover',
+                sizes: '(min-width: 768px) 520px, 100vw',
+                widths: '400, 600, 800, 1000, 1200, 1400'
+            }}
+          {%- else -%}
+            <div class="w-full h-full min-h-[260px] md:min-h-full flex items-center justify-center text-neutral-400">
+              {{ 'detailed-apparel-1' | placeholder_svg_tag: 'w-1/2 h-1/2' }}
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} Right: scrollable product list {%- endcomment -%}
+        <div class="flex-1 flex flex-col min-h-0 min-w-0 border-t md:border-t-0 md:border-l border-neutral-200">
+          <div class="px-5 pt-5 pb-3 shrink-0 border-b border-neutral-200">
+            {%- if section.settings.modal_heading != blank -%}
+              <h2 class="text-xl md:text-2xl font-medium tracking-tight m-0 pr-8">{{ section.settings.modal_heading }}</h2>
+            {%- endif -%}
+            {%- if section.settings.modal_body != blank -%}
+              <div class="rte text-lg md:text-xl text-neutral-600 mt-2 [&_p]:m-0 [&_p+p]:mt-1">
+                {{ section.settings.modal_body }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          <div class="lookbook-products overflow-y-auto flex-1 min-h-0 px-6 py-4 md:px-5">
+            {%- if section.settings.modal_products_heading != blank -%}
+              <p class="text-base font-semibold tracking-[0.12em] uppercase text-neutral-500 m-0 mb-4">
+                {{ section.settings.modal_products_heading }}
+              </p>
+            {%- endif -%}
+
+            <div class="flex flex-col" role="list">
+              {%- for product in section.settings.modal_products -%}
+                {% render 'lookbook-modal-product',
+                  product: product,
+                  section: section,
+                  settings: settings,
+                  routes: routes,
+                  lookbook_modal_id: lookbook_modal_id,
+                  index: forloop.index,
+                  is_last: forloop.last
+                %}
+              {%- endfor -%}
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </ui-modal>
+  {%- else -%}
+    <ui-modal
+      id="{{ lookbook_modal_id }}"
+      label="{{ section.settings.modal_heading | default: section.settings.link_text | default: 'Dialog' | escape }}"
+    >
+      {%- if section.settings.modal_heading != blank -%}
+        <h2 slot="title" class="m-0">{{ section.settings.modal_heading }}</h2>
+      {%- endif -%}
+      <div class="rte">
+        {{ section.settings.modal_body }}
+      </div>
+    </ui-modal>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Lookbook",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "label": "Image width (desktop)",
+      "default": 45
+    },
+    {
+      "type": "header",
+      "content": "Image link"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link text",
+      "default": "Shop the look"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL",
+      "info": "Used for the optional button inside the modal"
+    },
+    {
+      "type": "header",
+      "content": "Shop the look modal"
+    },
+    {
+      "type": "text",
+      "id": "modal_heading",
+      "label": "Modal heading",
+      "default": "Shop the look"
+    },
+    {
+      "type": "richtext",
+      "id": "modal_body",
+      "label": "Modal text",
+      "default": "<p>Browse the pieces from this look and complete your outfit.</p>"
+    },
+    {
+      "type": "text",
+      "id": "modal_button_label",
+      "label": "Modal button label",
+      "default": "View collection",
+      "info": "Shown only if Link URL is set"
+    },
+    {
+      "type": "product_list",
+      "id": "modal_products",
+      "label": "Products in modal",
+      "limit": 12
+    },
+    {
+      "type": "text",
+      "id": "modal_products_heading",
+      "label": "Products block heading",
+      "default": "Shop this look",
+      "info": "Shown above the product grid when products are selected"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#f5f0eb"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1a1a1a"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading",
+          "default": "The Collection"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Size",
+          "options": [
+            { "value": "text-base md:text-lg", "label": "Small" },
+            { "value": "text-lg md:text-xl lg:text-2xl", "label": "Medium" },
+            { "value": "text-xl md:text-2xl lg:text-3xl", "label": "Large" }
+          ],
+          "default": "text-lg md:text-xl lg:text-2xl"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Our latest collection demonstrates an elegant eccentricity – bold patterns inspired by traditional nomadic dressing, embroidered buttons, ceramic detailing and artisanal stitching contrast with stark, clean-lined silhouettes that showcase refined modernity."
+        },
+        {
+          "type": "checkbox",
+          "id": "italic",
+          "label": "Italic",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Label",
+          "default": "Explore"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "URL"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "outline", "label": "Outline" },
+            { "value": "underline", "label": "Underline" }
+          ],
+          "default": "outline"
+        }
+      ]
+    },
+    {
+      "type": "spacer",
+      "name": "Spacer",
+      "settings": [
+        {
+          "type": "range",
+          "id": "height",
+          "min": 4,
+          "max": 80,
+          "step": 4,
+          "unit": "px",
+          "label": "Height",
+          "default": 24
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lookbook",
+      "blocks": [
+        { "type": "description" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,23 @@
+{
+  "name": "test-task",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./src/tailwind.css -o ./assets/tailwind.css --minify",
+    "watch:css": "npx tailwindcss -i ./src/tailwind.css -o ./assets/tailwind.css --watch",
+    "build:ts": "tsc --noEmit && node esbuild.config.mjs",
+    "watch:ts": "node esbuild.config.mjs --watch",
+    "build": "npm run build:css && npm run build:ts",
+    "dev": "npm run watch:css & npm run watch:ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.7.0"
+  }
+}
