@@ -34,13 +34,10 @@
         "modal_button_label": "View collection",
         "modal_products": [
           "the-3p-fulfilled-snowboard",
-          "the-collection-snowboard-hydrogen",
-          "the-collection-snowboard-liquid",
-          "the-collection-snowboard-oxygen",
-          "the-compare-at-price-snowboard",
           "the-complete-snowboard",
           "the-multi-managed-snowboard",
-          "selling-plans-ski-wax"
+          "selling-plans-ski-wax",
+          "the-compare-at-price-snowboard"
         ],
         "modal_products_heading": "Shop this look",
         "background_color": "#f5f0eb",
